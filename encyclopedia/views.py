@@ -52,10 +52,10 @@ def create_page(request):
     if request.method == 'POST':
         form = NewPageForm(request.POST)
         if form.is_valid():
-            title = request['title']
-            text = request['text']
+            title = form.cleaned_data['title']
+            text = form.cleaned_data['text']
             util.save_entry(title, f"#{title} /n {text}")
-        return redirect(title)
+            return title(request, str(title))
     return render(request, "encyclopedia/create_page.html", {
                 'form': NewPageForm()
             })
