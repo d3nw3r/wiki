@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django import forms
 from . import util
 import re
-
+import random
 
 
 def index(request):
@@ -42,3 +42,14 @@ def search(request):
         return render(request, "encyclopedia/search.html", {
             'search_content': form['q']
         })
+
+# функція вибору випадкової сторінки
+def random_choice(request):
+    random_title = random.choice(util.list_entries())
+
+    return render(request, "encyclopedia/randompage.html", {
+        'random_title_name': random_title,
+        'random_title_context': util.get_entry(random_title)
+        
+    })
+
