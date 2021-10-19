@@ -1,8 +1,13 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django import forms
 from . import util
 import re
 import random
+
+
+class NewPageForm(forms.Form):
+    title = forms.CharField(label="Article name")
+    text = forms.CharField(widget=forms.Textarea(attrs={'rows': 10, 'cols': 5}))
 
 
 def index(request):
@@ -42,6 +47,25 @@ def search(request):
         return render(request, "encyclopedia/search.html", {
             'search_content': form['q']
         })
+
+def create_page(request):
+    if request.method == 'POST':
+        form = NewPageForm(request.POST)
+        if form.is_valid():
+            title = request['title']
+            text = request['text']
+            util.save_entry(title, f"#{title} /n {text}")
+        return redirect(title)
+    return render(request, "encyclopedia/create_page.html", {
+                'form': NewPageForm()
+            })
+
+
+
+
+
+
+
 
 # функція вибору випадкової сторінки
 def random_choice(request):
