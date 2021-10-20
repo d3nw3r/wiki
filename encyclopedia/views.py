@@ -6,7 +6,7 @@ import random
 
 
 class NewPageForm(forms.Form):
-    title = forms.CharField(label="Article name")
+    title_name = forms.CharField(label="Article name")
     text = forms.CharField(widget=forms.Textarea(attrs={'rows': 10, 'cols': 5}))
 
 
@@ -48,23 +48,18 @@ def search(request):
             'search_content': form['q']
         })
 
+# функція створення нової сторінки
 def create_page(request):
     if request.method == 'POST':
         form = NewPageForm(request.POST)
         if form.is_valid():
-            title = form.cleaned_data['title']
+            title_name = form.cleaned_data['title_name']
             text = form.cleaned_data['text']
-            util.save_entry(title, f"#{title} /n {text}")
-            return title(request, str(title))
+            util.save_entry(title_name, f"#{title_name}  {text}")
+            return title(request, title_name)
     return render(request, "encyclopedia/create_page.html", {
                 'form': NewPageForm()
             })
-
-
-
-
-
-
 
 
 # функція вибору випадкової сторінки
