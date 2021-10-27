@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
 from django import forms
+from django.http import HttpResponseRedirect, HttpResponse
+from django.urls import reverse
 from . import util
 import re
 import random
@@ -8,6 +10,8 @@ import random
 class NewPageForm(forms.Form):
     title_name = forms.CharField(label="Article name")
     text = forms.CharField(widget=forms.Textarea(attrs={'rows': 10, 'cols': 5}))
+
+
 
 
 def index(request):
@@ -27,6 +31,22 @@ def title(request, title):
             'title_name': title
         })
 
+
+def edit(request, title):
+    text = util.get_entry(title)
+    return render(request, "encyclopedia/edit.html", {
+        'form': NewPageForm({'title_name':title, 'text':text}),
+        'title_name': title
+    })
+
+def saveedit(request):
+    if request.method == 'POST':
+        form = NewPageForm(request.POST)
+        if form.is_valid():
+            article_name = form.cleaned_data['title_name']
+            content = form.cleaned_data['text']
+            util.save_entry(article_name, content)
+            return HttpResponseRedirect(reverse('wiki:title', args=[article_name]))  # робимо перенаправлення на збережену статю
 
 # функція пошуку на сторінці
 def search(request):
